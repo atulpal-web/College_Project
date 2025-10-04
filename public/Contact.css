@@ -1,0 +1,175 @@
+:root {
+  --green: #27ae60;
+  --light-color: #0dcaf0;
+  --black: #ffffff;
+  --dark-color: #047332;
+  --border: 0.1rem solid rgba(3, 3, 3, 0.1);
+  --border-hover: 0.1rem var(--black);
+  --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  outline: none;
+  border: none;
+  text-decoration: none;
+  text-transform: capitalize;
+  transition: all 0.3s linear;
+}
+
+html::-webkit-scrollbar {
+  width: 0rem;
+}
+
+html::-webkit-scrollbar-thumb {
+  background: var(--black);
+  border-radius: 1rem;
+}
+
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  overflow-x: hidden;
+}
+
+.form-check-input:checked {
+  background-color: #dc3545; 
+  border-color: #dc3545;
+}
+
+/* Optional: red outline on focus */
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.navbar-brand img {
+  height: 50px;
+  object-fit: contain;
+}
+.nav-link {
+  color: white !important;
+  transition: 0.3s;
+}
+.nav-link:hover {
+  color: #ff4d4d !important;
+}
+.search-box input {
+  border-radius: 20px 0 0 20px;
+}
+.search-box button {
+  border-radius: 0 20px 20px 0;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+}
+
+.nav-link:hover {
+  color: #ffc107 !important;
+  transition: 0.3s;
+}
+
+.social-icons a {
+  color: #6c757d;
+  margin-left: 10px;
+}
+
+.social-icons a:hover {
+  color: #495057;
+}
+
+.contact-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 0;
+  min-height: 100vh;
+}
+
+.card {
+  border: none;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.image-container {
+  border-radius: 1.5rem;
+  overflow: hidden;
+  height: 600px;
+}
+
+.contact-form-container {
+  padding: 3rem;
+}
+
+.form-control {
+  border-radius: 0.75rem;
+  background-color: #f1f1f1;
+  border: 1px solid #e0e0e0;
+}
+
+.form-control:focus {
+  background-color: #fff;
+  border-color: #8f44fd;
+  box-shadow: 0 0 0 0.25rem rgba(143, 68, 253, 0.25);
+}
+
+.btn-primary {
+  background-image: linear-gradient(to right, #8f44fd, #4a148c);
+  border: none;
+  border-radius: 1.5rem;
+  padding: 0.75rem 2rem;
+  font-weight: bold;
+}
+
+.btn-primary:hover {
+  opacity: 0.85;
+  background-image: linear-gradient(to right, #8f44fd, #4a148c);
+}
+
+.gradient-text {
+  background: linear-gradient(to right, #8f44fd, #4a148c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.decoration {
+  position: absolute;
+  z-index: -1;
+  opacity: 0.5;
+}
+
+.decoration.left {
+  top: 15%;
+  left: -100px;
+  width: 300px;
+  height: 600px;
+  background: radial-gradient(circle at 100% 50%, #711fec, transparent 70%),
+    radial-gradient(circle at 0% 50%, #4a148c, transparent 70%);
+  transform: rotate(-10deg);
+}
+
+.decoration.right {
+  bottom: 10%;
+  right: -100px;
+  width: 300px;
+  height: 600px;
+  background: radial-gradient(circle at 0% 50%, #ee9d06, transparent 70%),
+    radial-gradient(circle at 100% 50%, #ff9b04, transparent 70%);
+  transform: rotate(10deg);
+}
+
+.phone-link {
+  text-decoration: none;
+  color: #000;
+}

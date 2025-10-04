@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Online Book Store </title>
+  <link rel="icon" href="./Images/IconOnly.png" type="image/x-icon" />
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="./Contact.css">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
+</head>
+<body>
+
+  <!-- Header Start -->
+<header>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm px-3 py-2">
+    <div class="container-fluid">
+
+      <!-- Logo -->
+      <a class="navbar-brand mx-5" href="#" >
+        <img src="./Images/Logo-removebg-preview.png" alt="Bookstore Logo" />
+      </a>
+
+      <!-- Hamburger Menu -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Navbar Content -->
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <!-- Menu Links -->
+        <ul class="navbar-nav mx-auto mb-1 mb-lg-0 gap-lg-2">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="combo.html">Combo</a></li>
+          <li class="nav-item"><a class="nav-link" href="trending.html">Trending</a></li>
+          <li class="nav-item"><a class="nav-link" href="reviews.html">Reviews</a></li>
+          <li class="nav-item"><a class="nav-link active" href="contact.html">Contact</a></li>
+        </ul>
+
+        <!-- Search Box -->
+        <form class="d-flex me-3 search-box" role="search">
+          <input class="form-control me-1" type="search" placeholder="Search books..." />
+          <button class="btn btn-danger" type="submit"><i class="fas fa-search"></i></button>
+        </form>
+
+        <!-- Icons -->
+        <div class="d-flex gap-3">
+          <a href="#" class="text-light"><i class="fas fa-heart fs-5"></i></a>
+          <a href="#" class="text-light"><i class="fas fa-shopping-cart fs-5"></i></a>
+          <a href="#" class="text-light" data-bs-toggle="modal" data-bs-target="#userModal">
+          <i class="fas fa-user fs-5"></i></a>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+    <div class="decoration left d-none d-md-block"></div>
+    <div class="decoration right d-none d-md-block"></div>
+
+    <section class="contact-section">
+        <div class="container">
+            <div class="row g-5 align-items-center justify-content-center">
+                <div class="col-lg-6">
+                    <div class="image-container">
+                         <!-- Placeholder image for the books store -->
+                        <img src="./Images/photo-1679183774547-f2a2cc817a49.jpeg" class="img-fluid" alt="Books Store">
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="contact-form-container">
+                        <h1 class="mb-3 gradient-text fw-bold">Get in touch with us</h1>
+                        <p class="mb-4 text-muted">We would love to hear from you and chat about books!</p>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="far fa-envelope text-primary me-2"></i>
+                            <span class="text-muted"> Knowledge@Tag.com</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-4">
+                            <i class="fas fa-phone-alt text-primary me-2"></i>
+                            <a href="tel:+91-8141373845" class="phone-link text-muted">+91 8141373845</a>
+                        </div>
+
+                        <!-- FIXED FORM -->
+                        <form id="contact">
+                            <div class="mb-3">
+                                <label for="name" class="form-label visually-hidden">Name</label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Your name here" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label visually-hidden">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Your email here" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="message" class="form-label visually-hidden">Message</label>
+                                <textarea class="form-control" id="message" name="message" rows="4" placeholder="Your message here" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Send message</button>
+                        </form>
+                        <!-- END FORM -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Contact Form Submit Handler
+        document.getElementById("contact").addEventListener("submit", function(e) {
+           e.preventDefault();
+
+           fetch("https://formsubmit.co/ajax/palatul8141@gmail.com", {
+             method: "POST",
+             headers: {
+               'Content-Type': 'application/json',
+               'Accept': 'application/json'
+             },
+             body: JSON.stringify({
+               name: document.querySelector("[name='name']").value,
+               email: document.querySelector("[name='email']").value,
+               message: document.querySelector("[name='message']").value
+             })
+           })
+           .then(response => response.json())
+           .then(data => {
+             console.log(data);
+             alert(" Email sent successfully!");
+             e.target.reset();
+           })
+           .catch(error => {
+             console.error(error);
+             alert("❌ Failed to send email.");
+           });
+        });
+    </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/script.js"></script>
+</body>
+</html>
