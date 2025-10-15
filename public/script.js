@@ -103,7 +103,7 @@ document.getElementById("loginForm").addEventListener("submit", (e) => {
 
   showToast("Login Successful😍", "success");
 
-  // ✅ Modal close (safe way)
+  // Modal close (safe way)
   const modalEl = document.getElementById("userModal");
   let modal = bootstrap.Modal.getInstance(modalEl);
   if (!modal) {
@@ -125,7 +125,7 @@ document.getElementById("signupForm").addEventListener("submit", (e) => {
 
   showToast("Signup Successful 🥰", "success");
 
-  // ✅ Modal close (safe way)
+  // Modal close (safe way)
   const modalEl = document.getElementById("userModal");
   let modal = bootstrap.Modal.getInstance(modalEl);
   if (!modal) {

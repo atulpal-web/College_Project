@@ -6,29 +6,33 @@ function showToast(message, type = "success") {
     icon: icon,
     title: message,
     toast: true,
-    position: "top", // 🔹 Top Center pe show hoga
+    position: "top", 
     showConfirmButton: false,
     timer: 1500,
     timerProgressBar: true
   });
 }
 
-//  Cart Array
+// Cart Array
 let cart = [];
 
 //  Add to Cart
 function addToCart(comboName) {
-  // Price ko card se read karenge
   const card = Array.from(document.querySelectorAll(".combo-card"))
     .find(c => c.querySelector("h5").textContent === comboName);
 
   const priceText = card.querySelector(".price span").textContent.replace("₹", "").trim();
   const price = parseFloat(priceText);
 
-  cart.push({ name: comboName, price: price });
-  updateCart();
+  // Check if item already exists
+  const existing = cart.find(item => item.name === comboName);
+  if (existing) {
+    existing.quantity++;
+  } else {
+    cart.push({ name: comboName, price: price, quantity: 1 });
+  }
 
-  // Toast show
+  updateCart();
   showToast(`${comboName} added to cart 🛒`, "success");
 }
 
@@ -42,28 +46,57 @@ function updateCart() {
 
   cartItems.innerHTML = "";
   let total = 0;
+  let count = 0;
 
   cart.forEach((item, index) => {
-    total += item.price;
+    total += item.price * item.quantity;
+    count += item.quantity;
+
     cartItems.innerHTML += `
       <li class="list-group-item d-flex justify-content-between align-items-center">
-        ${item.name} - ₹${item.price}
-        <button class="btn btn-sm btn-danger" onclick="removeFromCart(${index})">Remove</button>
+        <div>
+          <strong>${item.name}</strong><br>
+          ₹${item.price} × ${item.quantity} = ₹${item.price * item.quantity}
+        </div>
+        <div>
+          <button class="btn btn-sm btn-outline-danger" onclick="decreaseQuantity(${index})">−</button>
+          <span class="mx-2 fw-bold">${item.quantity}</span>
+          <button class="btn btn-sm btn-outline-success" onclick="increaseQuantity(${index})">+</button>
+          <button class="btn btn-sm btn-danger ms-2" onclick="removeFromCart(${index})">
+            <i class="fa fa-trash"></i>
+          </button>
+        </div>
       </li>
     `;
   });
 
-  cartCount.textContent = cart.length;
+  cartCount.textContent = count;
   cartTotal.textContent = total;
 }
 
-//  Remove from Cart
+//  Increase Quantity
+function increaseQuantity(index) {
+  cart[index].quantity++;
+  updateCart();
+}
+
+// Decrease Quantity
+function decreaseQuantity(index) {
+  if (cart[index].quantity > 1) {
+    cart[index].quantity--;
+  } else {
+    cart.splice(index, 1);
+  }
+  updateCart();
+}
+
+//  Remove Item
 function removeFromCart(index) {
   cart.splice(index, 1);
   updateCart();
 }
 
-//  Checkout Button (Empty Cart)
+//  Checkout (Empty Cart)
 function checkout() {
   if (cart.length === 0) {
     showToast("Your cart is empty ❌", "error");
