@@ -313,13 +313,13 @@ function getStars(rating) {
 const bookList = document.getElementById("book-list");
 books.forEach(book => {
  
-  const safeTitle = book.title.replace(/'/g, "\\'");
+  const Title = book.title.replace(/'/g, "\\'");
   bookList.innerHTML += `
     <div class="col-md-3 col-sm-6 mb-4">
       <div class="card shadow border-0 rounded-4 hover-scale book-card position-relative">
         <button class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle shadow wishlist-btn"
           id="wishlist-btn-${book.id}"
-          onclick="toggleWishlist(${book.id}, '${safeTitle}', '${book.img}')">
+          onclick="toggleWishlist(${book.id}, '${Title}', '${book.img}')">
           <i class="fas fa-heart text-grey"></i> 
         </button>
 
@@ -333,7 +333,7 @@ books.forEach(book => {
             <span class="fw-bold text-danger fs-5">₹${book.priceNew}</span>
           </p>
 
-          <button class="btn-cart-outline add-to-cart" onclick="addToCart('${safeTitle}', ${book.priceNew})">
+          <button class="btn-cart-outline add-to-cart" onclick="addToCart('${Title}', ${book.priceNew})">
             <i class="fa fa-cart-plus"></i> Add to Cart
           </button>
         </div>
@@ -346,13 +346,20 @@ books.forEach(book => {
 /*
    Cart functions
  */
+/*
+   Cart functions (with quantity + - buttons)
+*/
 let cart = [];
 
 function addToCart(bookName, price) {
-  cart.push({ name: bookName, price: price });
+  const existing = cart.find(item => item.name === bookName);
+  if (existing) {
+    existing.quantity++;
+  } else {
+    cart.push({ name: bookName, price: price, quantity: 1 });
+  }
   updateCart();
   showToast(`${bookName} Added Into Cart 🛒`, "success");
-  
 }
 
 function updateCart() {
@@ -360,21 +367,50 @@ function updateCart() {
   const cartCount = document.getElementById("cart-count");
   const cartTotal = document.getElementById("cart-total");
 
+  if (!cartItems) return;
+
   cartItems.innerHTML = "";
   let total = 0;
+  let count = 0;
 
   cart.forEach((item, index) => {
-    total += item.price;
+    total += item.price * item.quantity;
+    count += item.quantity;
+
     cartItems.innerHTML += `
       <li class="list-group-item d-flex justify-content-between align-items-center">
-        ${item.name} - ₹${item.price}
-        <button class="btn btn-sm btn-danger" onclick="removeFromCart(${index})">Remove</button>
+        <div>
+          <strong>${item.name}</strong><br>
+          ₹${item.price} × ${item.quantity} = ₹${item.price * item.quantity}
+        </div>
+        <div>
+          <button class="btn btn-sm btn-outline-danger" onclick="decreaseQuantity(${index})">−</button>
+          <span class="mx-2 fw-bold">${item.quantity}</span>
+          <button class="btn btn-sm btn-outline-success" onclick="increaseQuantity(${index})">+</button>
+          <button class="btn btn-sm btn-danger ms-2" onclick="removeFromCart(${index})">
+            <i class="fa fa-trash"></i>
+          </button>
+        </div>
       </li>
     `;
   });
 
-  cartCount.textContent = cart.length;
-  cartTotal.textContent = total;
+  if (cartCount) cartCount.textContent = count;
+  if (cartTotal) cartTotal.textContent = total;
+}
+
+function increaseQuantity(index) {
+  cart[index].quantity++;
+  updateCart();
+}
+
+function decreaseQuantity(index) {
+  if (cart[index].quantity > 1) {
+    cart[index].quantity--;
+  } else {
+    cart.splice(index, 1);
+  }
+  updateCart();
 }
 
 function removeFromCart(index) {
