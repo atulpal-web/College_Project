@@ -13,6 +13,10 @@
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
+
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
 </head>
 <body>
 
@@ -109,36 +113,55 @@
     </section>
 
     <script>
-        // Contact Form Submit Handler
-        document.getElementById("contact").addEventListener("submit", function(e) {
-           e.preventDefault();
 
-           fetch("https://formsubmit.co/ajax/palatul8141@gmail.com", {
-             method: "POST",
-             headers: {
-               'Content-Type': 'application/json',
-               'Accept': 'application/json'
-             },
-             body: JSON.stringify({
-               name: document.querySelector("[name='name']").value,
-               email: document.querySelector("[name='email']").value,
-               message: document.querySelector("[name='message']").value
-             })
-           })
-           .then(response => response.json())
-           .then(data => {
-             console.log(data);
-             alert(" Email sent successfully!");
-             e.target.reset();
-           })
-           .catch(error => {
-             console.error(error);
-             alert("❌ Failed to send email.");
-           });
-        });
+     // Contact Form Submit Handler
+document.getElementById("contact").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    fetch("https://formsubmit.co/ajax/palatul8141@gmail.com", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            name: document.querySelector("[name='name']").value,
+            email: document.querySelector("[name='email']").value,
+            message: document.querySelector("[name='message']").value
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        
+    
+        Toastify({
+            text: "✅ Email sent successfully!", 
+            duration: 5000,
+            gravity: "top",
+            position: "center",
+            backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)", 
+            stopOnFocus: true,
+        }).showToast();
+
+        e.target.reset(); 
+    })
+    .catch(error => {
+        console.error(error);
+        
+        Toastify({
+            text: "❌ Failed to send email. Please try again.", 
+            duration: 5000,
+            gravity: "top",
+            position: "center",
+            backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)", 
+            stopOnFocus: true,
+        }).showToast();
+    });
+});
+
     </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="/script.js"></script>
 </body>
 </html>

@@ -1,4 +1,7 @@
 let generatedOTP = "";
+let isLoggedIn = false; // <-- NAYA: Login state track karega
+let cart = []; // State ko upar move kar diya
+let wishlist = []; // State ko upar move kar diya
 
 //  Unified Toast (SweetAlert2) - Top center
 function showToast(message, type = "success") {
@@ -10,13 +13,13 @@ function showToast(message, type = "success") {
     toast: true,
     position: "top", 
     showConfirmButton: false,
+    backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
     timer: 1500,
     timerProgressBar: true
   });
 }
 
-/* 
-   Toggle forms & password
+/* Toggle forms & password
 */
 document.getElementById("toggleFormLink").addEventListener("click", function () {
   const loginForm = document.getElementById("loginForm");
@@ -59,8 +62,7 @@ document.getElementById("toggleSignupPassword").addEventListener("click", functi
   }
 });
 
-/* 
-   OTP Flow
+/* OTP Flow
  */
 document.getElementById("forgotPasswordLink").addEventListener("click", () => {
   document.getElementById("loginForm").style.display = "none";
@@ -110,6 +112,11 @@ document.getElementById("loginForm").addEventListener("submit", (e) => {
     modal = new bootstrap.Modal(modalEl);
   }
   modal.hide();
+  
+  // --- NAYA: Login state update karein ---
+  isLoggedIn = true;
+  updateUIForLoginState(); // UI ko refresh karein
+  // -------------------------------------
 });
 
 document.getElementById("signupForm").addEventListener("submit", (e) => {
@@ -132,7 +139,74 @@ document.getElementById("signupForm").addEventListener("submit", (e) => {
     modal = new bootstrap.Modal(modalEl);
   }
   modal.hide();
+  
+  // --- NAYA: Signup ke baad auto-login ---
+  isLoggedIn = true;
+  updateUIForLoginState(); // UI ko refresh karein
+  // ---------------------------------------
 });
+
+
+/* NAYA: Logout Logic (id="logout-nav-btn" HTML mein hona chahiye)
+*/
+const logoutBtn = document.getElementById("logout-nav-btn");
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    isLoggedIn = false;
+    cart = []; // Logout par cart khali karein
+    wishlist = []; // Logout par wishlist khali karein
+    
+    updateCart(); // Cart UI update karein (0 dikhaye)
+    updateWishlist(); // Wishlist UI update karein (0 dikhaye)
+    updateUIForLoginState(); // Content chupayein, login button dikhayein
+    
+    showToast("Logged out successfully.", "info");
+  });
+}
+
+
+/*
+  NAYA: UI ko Login State ke hisaab se Manage karein
+  (Yeh function 'main-content', protected links, aur navbar icons ko handle karega)
+*/
+function updateUIForLoginState() {
+  const loginNavButton = document.getElementById("login-nav-btn"); 
+  const logoutNavButton = document.getElementById("logout-nav-btn"); 
+  const cartIcon = document.getElementById("cart-icon-wrapper");
+  const wishlistIcon = document.getElementById("wishlist-icon-wrapper");
+  const mainContent = document.getElementById("main-content");
+  
+  // Protected links ko class protected-nav-link di gayi hai
+  const protectedLinks = document.querySelectorAll(".protected-nav-link");
+
+  if (isLoggedIn) {
+    // --- User LOGGED IN hai ---
+    if (mainContent) mainContent.style.display = "block";
+    if (loginNavButton) loginNavButton.style.display = "none";
+    if (logoutNavButton) logoutNavButton.style.display = "block";
+    if (cartIcon) cartIcon.style.display = "block";
+    if (wishlistIcon) wishlistIcon.style.display = "block";
+    protectedLinks.forEach(link => link.style.display = "block");
+
+    renderBooks(); 
+    refreshWishlistIcons(); 
+  
+  } else {
+    // --- User LOGGED OUT hai ---
+    if (mainContent) mainContent.style.display = "none";
+    if (loginNavButton) loginNavButton.style.display = "block";
+    if (logoutNavButton) logoutNavButton.style.display = "none";
+    if (cartIcon) cartIcon.style.display = "none";
+    if (wishlistIcon) wishlistIcon.style.display = "none";
+    protectedLinks.forEach(link => link.style.display = "none");
+    
+    // Books ko bhi chupa dein
+    const bookList = document.getElementById("book-list");
+    if (bookList) bookList.innerHTML = "";
+  }
+}
+
 
 // Add to Cart 
 
@@ -307,50 +381,51 @@ function getStars(rating) {
   return stars;
 }
 
-/* 
-   Render Book Cards (safe)
- */
-const bookList = document.getElementById("book-list");
-books.forEach(book => {
- 
-  const Title = book.title.replace(/'/g, "\\'");
-  bookList.innerHTML += `
-    <div class="col-md-3 col-sm-6 mb-4">
-      <div class="card shadow border-0 rounded-4 hover-scale book-card position-relative">
-        <button class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle shadow wishlist-btn"
-          id="wishlist-btn-${book.id}"
-          onclick="toggleWishlist(${book.id}, '${Title}', '${book.img}')">
-          <i class="fas fa-heart text-grey"></i> 
-        </button>
+/* Render Book Cards (safe) - BADLAAV KIYA GAYA
+*/
+// Ise function mein wrap kar diya hai taaki yeh sirf login ke baad call ho
+function renderBooks() {
+  const bookList = document.getElementById("book-list");
+  if (!bookList) return; // Safety check
+  
+  bookList.innerHTML = ""; // Clear list before rendering
 
-        <img src="${book.img}" class="card-img-top" alt="${book.title}">
-        <div class="card-body text-center">
-          <h5 class="card-title fw-bold">${book.title}</h5>
-          <p class="text-muted small mb-1">by ${book.author}</p>
-          <div class="mb-2">${getStars(book.rating)}</div>
-          <p class="mb-3">
-            <del class="text-muted">₹${book.priceOld}</del>
-            <span class="fw-bold text-danger fs-5">₹${book.priceNew}</span>
-          </p>
-
-          <button class="btn-cart-outline add-to-cart" onclick="addToCart('${Title}', ${book.priceNew})">
-            <i class="fa fa-cart-plus"></i> Add to Cart
+  books.forEach(book => {
+    const Title = book.title.replace(/'/g, "\\'");
+    bookList.innerHTML += `
+      <div class="col-md-3 col-sm-6 mb-4">
+        <div class="card shadow border-0 rounded-4 hover-scale book-card position-relative">
+          <button class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle shadow wishlist-btn"
+            id="wishlist-btn-${book.id}"
+            onclick="toggleWishlist(${book.id}, '${Title}', '${book.img}')">
+            <i class="fas fa-heart text-grey"></i> 
           </button>
+
+          <img src="${book.img}" class="card-img-top" alt="${book.title}">
+          <div class="card-body text-center">
+            <h5 class="card-title fw-bold">${book.title}</h5>
+            <p class="text-muted small mb-1">by ${book.author}</p>
+            <div class="mb-2">${getStars(book.rating)}</div>
+            <p class="mb-3">
+              <del class="text-muted">₹${book.priceOld}</del>
+              <span class="fw-bold text-danger fs-5">₹${book.priceNew}</span>
+            </p>
+
+            <button class="btn-cart-outline add-to-cart" onclick="addToCart('${Title}', ${book.priceNew})">
+              <i class="fa fa-cart-plus"></i> Add to Cart
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  `;
-});
+    `;
+  });
+} 
+// renderBooks function yahan khatam hota hai
 
 
-/*
-   Cart functions
- */
 /*
    Cart functions (with quantity + - buttons)
 */
-let cart = [];
-
 function addToCart(bookName, price) {
   const existing = cart.find(item => item.name === bookName);
   if (existing) {
@@ -421,12 +496,7 @@ function removeFromCart(index) {
 
 /*
    Wishlist functions
- - */
-
-
-    // Your wishlist code
-    let wishlist = [];
-
+ */
 // Toggle wishlist (global)
 function toggleWishlist(id, name, image) {
   id = Number(id);
@@ -467,7 +537,7 @@ function updateWishlist() {
     `;
   });
 
-  wishlistCount.textContent = wishlist.length;
+  if (wishlistCount) wishlistCount.textContent = wishlist.length;
 }
 
 // Remove single item
@@ -478,13 +548,7 @@ function removeFromWishlist(id) {
   refreshWishlistIcons();
 }
 
-function refreshWishlistIcons() {
-  console.log("Wishlist icons refreshed");
-  
-}
-
 // heart color
-
 function refreshWishlistIcons() {
   const allBtns = document.querySelectorAll(".wishlist-btn");
 
@@ -500,3 +564,9 @@ function refreshWishlistIcons() {
   });
 }
 
+
+/* NAYA: Page load hone par UI ko check karein
+*/
+document.addEventListener("DOMContentLoaded", () => {
+  updateUIForLoginState(); // Shuru mein sabkuch chupane ke liye call karein
+});
