@@ -13,7 +13,6 @@ function showToast(message, type = "success") {
     toast: true,
     position: "top", 
     showConfirmButton: false,
-    backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
     timer: 1500,
     timerProgressBar: true
   });
@@ -147,8 +146,7 @@ document.getElementById("signupForm").addEventListener("submit", (e) => {
 });
 
 
-/* NAYA: Logout Logic (id="logout-nav-btn" HTML mein hona chahiye)
-*/
+
 const logoutBtn = document.getElementById("logout-nav-btn");
 if (logoutBtn) {
   logoutBtn.addEventListener("click", (e) => {
@@ -181,7 +179,7 @@ function updateUIForLoginState() {
   const protectedLinks = document.querySelectorAll(".protected-nav-link");
 
   if (isLoggedIn) {
-    // --- User LOGGED IN hai ---
+    //  User LOGGED IN hai 
     if (mainContent) mainContent.style.display = "block";
     if (loginNavButton) loginNavButton.style.display = "none";
     if (logoutNavButton) logoutNavButton.style.display = "block";
@@ -193,7 +191,7 @@ function updateUIForLoginState() {
     refreshWishlistIcons(); 
   
   } else {
-    // --- User LOGGED OUT hai ---
+    //  User LOGGED OUT hai 
     if (mainContent) mainContent.style.display = "none";
     if (loginNavButton) loginNavButton.style.display = "block";
     if (logoutNavButton) logoutNavButton.style.display = "none";
@@ -386,9 +384,9 @@ function getStars(rating) {
 // Ise function mein wrap kar diya hai taaki yeh sirf login ke baad call ho
 function renderBooks() {
   const bookList = document.getElementById("book-list");
-  if (!bookList) return; // Safety check
+  if (!bookList) return; 
   
-  bookList.innerHTML = ""; // Clear list before rendering
+  bookList.innerHTML = ""; 
 
   books.forEach(book => {
     const Title = book.title.replace(/'/g, "\\'");
@@ -456,7 +454,7 @@ function updateCart() {
       <li class="list-group-item d-flex justify-content-between align-items-center">
         <div>
           <strong>${item.name}</strong><br>
-          ₹${item.price} × ${item.quantity} = ₹${item.price * item.quantity}
+          ₹${item.price}❌${item.quantity} = ₹${item.price * item.quantity}
         </div>
         <div>
           <button class="btn btn-sm btn-outline-danger" onclick="decreaseQuantity(${index})">−</button>
@@ -569,4 +567,4 @@ function refreshWishlistIcons() {
 */
 document.addEventListener("DOMContentLoaded", () => {
   updateUIForLoginState(); // Shuru mein sabkuch chupane ke liye call karein
-});
+});                  
