@@ -92,15 +92,15 @@ document.getElementById("verifyOtpBtn").addEventListener("click", () => {
 /*
    Login / Signup
  */
+// --- Enforce exactly 8-char password for login ---
 document.getElementById("loginForm").addEventListener("submit", (e) => {
   e.preventDefault();
   const email = document.getElementById("loginEmail").value.trim();
   const pass = document.getElementById("loginPassword").value.trim();
 
   if (!email || !pass) return showToast("Please fill all fields ❌", "danger");
-  if (!/^[^\s@]+@[^\s@]+\.com$/.test(email))
-    return showToast("Invalid email format ❌", "danger");
-  if (pass.length < 8) return showToast("Password must be at least 8 characters ❌", "danger");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast("Invalid email format ❌", "danger");
+  if (pass.length !== 8) return showToast("Password must be exactly 8 characters ❌", "danger");
 
   showToast("Login Successful😍", "success");
 
@@ -118,6 +118,7 @@ document.getElementById("loginForm").addEventListener("submit", (e) => {
   // -------------------------------------
 });
 
+// --- Enforce exactly 8-char password for signup ---
 document.getElementById("signupForm").addEventListener("submit", (e) => {
   e.preventDefault();
   const name = document.getElementById("signupName").value.trim();
@@ -125,9 +126,8 @@ document.getElementById("signupForm").addEventListener("submit", (e) => {
   const pass = document.getElementById("signupPassword").value.trim();
 
   if (!name || !email || !pass) return showToast("Please fill all fields ❌", "danger");
-  if (!/^[^\s@]+@[^\s@]+\.com$/.test(email))
-    return showToast("Email must end with '.com' ❌", "danger");
-  if (pass.length < 8) return showToast("Password must be at least 8 characters ❌", "danger");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast("Enter a valid email ❌", "danger");
+  if (pass.length !== 8) return showToast("Password must be exactly 8 characters ❌", "danger");
 
   showToast("Signup Successful 🥰", "success");
 
@@ -567,4 +567,4 @@ function refreshWishlistIcons() {
 */
 document.addEventListener("DOMContentLoaded", () => {
   updateUIForLoginState(); // Shuru mein sabkuch chupane ke liye call karein
-});                  
+});

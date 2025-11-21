@@ -14,7 +14,72 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
 
-  
+  <style>
+    /* WhatsApp floating button */
+    .whatsapp-btn {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 1200;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      background: linear-gradient(135deg,#25D366 0%,#128C7E 100%);
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(18,140,126,0.28), inset 0 -4px 8px rgba(0,0,0,0.08);
+      transition: transform .18s ease, box-shadow .18s ease;
+      text-decoration: none;
+      font-size: 26px;
+      backface-visibility: hidden;
+    }
+    .whatsapp-btn:hover { transform: translateY(-6px) scale(1.03); box-shadow: 0 12px 32px rgba(18,140,126,0.36); }
+    .whatsapp-btn:active { transform: translateY(-2px) scale(.99); }
+
+    /* subtle pulse */
+    .whatsapp-btn::after {
+      content: "";
+      position: absolute;
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      left: 0; top: 0;
+      box-shadow: 0 0 0 rgba(37,211,102,0.45);
+      animation: wa-pulse 2.6s infinite;
+      pointer-events: none;
+    }
+    @keyframes wa-pulse {
+      0% { transform: scale(.9); opacity: .6; }
+      70% { transform: scale(1.6); opacity: 0; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+
+    /* small tooltip label on hover */
+    .whatsapp-tooltip {
+      position: absolute;
+      right: 80px;
+      bottom: 50%;
+      transform: translateY(50%);
+      background: #111;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+      white-space: nowrap;
+    }
+    .whatsapp-btn:hover .whatsapp-tooltip { opacity: 1; transform: translateY(50%) translateX(-6px); }
+
+    /* responsive smaller on tiny screens */
+    @media (max-width:420px) {
+      .whatsapp-btn { width:52px; height:52px; font-size:22px; }
+      .whatsapp-btn::after { width:52px; height:52px; }
+    }
+  </style>
 </head>
 <body>
 
@@ -444,8 +509,14 @@
 
 
   <!-- WhatsApp Button -->
-  <a href="https://wa.me/8141373845" target="_blank" class="whatsapp-btn">
-    <i class="fab fa-whatsapp"></i>
+  <a id="whatsappBtn"
+     class="whatsapp-btn"
+     href="https://wa.me/918141373845?text=Hi%20I%20need%20help%20with%20Knowledge@Tag"
+     target="_blank"
+     rel="noopener noreferrer"
+     aria-label="Chat on WhatsApp">
+    <i class="fab fa-whatsapp" aria-hidden="true"></i>
+    <span class="whatsapp-tooltip">Chat with us on WhatsApp</span>
   </a>
 
 
