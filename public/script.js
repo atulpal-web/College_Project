@@ -13,7 +13,7 @@ function showToast(message, type = "success") {
     toast: true,
     position: "top", 
     showConfirmButton: false,
-    timer: 1500,
+    timer: 4000,
     timerProgressBar: true
   });
 }
@@ -89,38 +89,17 @@ document.getElementById("verifyOtpBtn").addEventListener("click", () => {
 });
 
 
-/*
-   Login / Signup
- */
-// --- Enforce exactly 8-char password for login ---
-document.getElementById("loginForm").addEventListener("submit", (e) => {
-  e.preventDefault();
-  const email = document.getElementById("loginEmail").value.trim();
-  const pass = document.getElementById("loginPassword").value.trim();
+/*  
+   Login / Signup with LocalStorage (Fixed Version)
+*/
 
-  if (!email || !pass) return showToast("Please fill all fields ❌", "danger");
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast("Invalid email format ❌", "danger");
-  if (pass.length !== 8) return showToast("Password must be exactly 8 characters ❌", "danger");
 
-  showToast("Login Successful😍", "success");
-
-  // Modal close (safe way)
-  const modalEl = document.getElementById("userModal");
-  let modal = bootstrap.Modal.getInstance(modalEl);
-  if (!modal) {
-    modal = new bootstrap.Modal(modalEl);
-  }
-  modal.hide();
-  
-  // --- NAYA: Login state update karein ---
-  isLoggedIn = true;
-  updateUIForLoginState(); // UI ko refresh karein
-  // -------------------------------------
-});
-
-// --- Enforce exactly 8-char password for signup ---
+// -------------------------
+// SIGNUP (No Auto Login)
+// -------------------------
 document.getElementById("signupForm").addEventListener("submit", (e) => {
   e.preventDefault();
+
   const name = document.getElementById("signupName").value.trim();
   const email = document.getElementById("signupEmail").value.trim();
   const pass = document.getElementById("signupPassword").value.trim();
@@ -129,40 +108,132 @@ document.getElementById("signupForm").addEventListener("submit", (e) => {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast("Enter a valid email ❌", "danger");
   if (pass.length !== 8) return showToast("Password must be exactly 8 characters ❌", "danger");
 
-  showToast("Signup Successful 🥰", "success");
+  // Save to localStorage
+  let users = JSON.parse(localStorage.getItem("users")) || [];
 
-  // Modal close (safe way)
-  const modalEl = document.getElementById("userModal");
-  let modal = bootstrap.Modal.getInstance(modalEl);
-  if (!modal) {
-    modal = new bootstrap.Modal(modalEl);
+  // Check email duplicate
+  if (users.some(u => u.email === email)) {
+    return showToast("Email already registered ❌", "danger");
   }
+
+  users.push({ name, email, pass });
+  localStorage.setItem("users", JSON.stringify(users));
+
+  showToast("Signup Successful 🥰 Login to continue.", "success");
+
+  // Form reset
+  document.getElementById("signupForm").reset();
+
+  // Close modal ONLY
+  const modalEl = document.getElementById("userModal");
+  let modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
   modal.hide();
-  
-  // --- NAYA: Signup ke baad auto-login ---
+
+  // DO NOT AUTO LOGIN → books hidden remain
+});
+
+// Login Form Submit 
+document.getElementById("loginForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+  const pass = document.getElementById("loginPassword").value.trim();
+
+  if (!email || !pass) return showToast("Please fill all fields ❌", "danger");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast("Invalid email format ❌", "danger");
+  if (pass.length !== 8) return showToast("Password must be exactly 8 characters ❌", "danger");
+
+  // Users list
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+
+  // VERY IMPORTANT ↓↓
+  // localStorage email lower-case me convert karke compare karein
+  const user = users.find(u => u.email.toLowerCase() === email && u.pass === pass);
+
+  if (!user) {
+    console.log("Users found:", users); // debugging help
+    return showToast("Incorrect Email or Password ❌", "danger");
+  }
+
+  showToast("Login Successful 😍", "success");
+
+  // Save login
   isLoggedIn = true;
-  updateUIForLoginState(); // UI ko refresh karein
-  // ---------------------------------------
+  localStorage.setItem("isLoggedIn", "true");
+  localStorage.setItem("currentUser", user.email);
+
+  document.getElementById("loginForm").reset();
+
+  const modalEl = document.getElementById("userModal");
+  let modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+  modal.hide();
+
+  updateUIForLoginState();
 });
 
 
 
+// -------------------------
+// LOGOUT
+// -------------------------
 const logoutBtn = document.getElementById("logout-nav-btn");
 if (logoutBtn) {
   logoutBtn.addEventListener("click", (e) => {
     e.preventDefault();
+
     isLoggedIn = false;
-    cart = []; // Logout par cart khali karein
-    wishlist = []; // Logout par wishlist khali karein
-    
-    updateCart(); // Cart UI update karein (0 dikhaye)
-    updateWishlist(); // Wishlist UI update karein (0 dikhaye)
-    updateUIForLoginState(); // Content chupayein, login button dikhayein
-    
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("currentUser");
+
+    cart = [];
+    wishlist = [];
+
+    updateCart();
+    updateWishlist();
+    updateUIForLoginState();
+
     showToast("Logged out successfully.", "info");
   });
 }
 
+
+// -------------------------
+// UI UPDATE (unchanged except login restore)
+// -------------------------
+function updateUIForLoginState() {
+  const loginNavButton = document.getElementById("login-nav-btn");
+  const logoutNavButton = document.getElementById("logout-nav-btn");
+  const cartIcon = document.getElementById("cart-icon-wrapper");
+  const wishlistIcon = document.getElementById("wishlist-icon-wrapper");
+  const mainContent = document.getElementById("main-content");
+  const protectedLinks = document.querySelectorAll(".protected-nav-link");
+
+  // Restore login state
+  isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+  if (isLoggedIn) {
+    if (mainContent) mainContent.style.display = "block";
+    if (loginNavButton) loginNavButton.style.display = "none";
+    if (logoutNavButton) logoutNavButton.style.display = "block";
+    if (cartIcon) cartIcon.style.display = "block";
+    if (wishlistIcon) wishlistIcon.style.display = "block";
+    protectedLinks.forEach(link => link.style.display = "block");
+
+    renderBooks();
+    refreshWishlistIcons();
+
+  } else {
+    if (mainContent) mainContent.style.display = "none";
+    if (loginNavButton) loginNavButton.style.display = "block";
+    if (logoutNavButton) logoutNavButton.style.display = "none";
+    if (cartIcon) cartIcon.style.display = "none";
+    if (wishlistIcon) wishlistIcon.style.display = "none";
+    protectedLinks.forEach(link => link.style.display = "none");
+
+    const bookList = document.getElementById("book-list");
+    if (bookList) bookList.innerHTML = "";
+  }
+}
 
 /*
   NAYA: UI ko Login State ke hisaab se Manage karein
