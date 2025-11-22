@@ -1,4 +1,3 @@
-let generatedOTP = "";
 let isLoggedIn = false; // <-- NAYA: Login state track karega
 let cart = []; // State ko upar move kar diya
 let wishlist = []; // State ko upar move kar diya
@@ -13,7 +12,7 @@ function showToast(message, type = "success") {
     toast: true,
     position: "top", 
     showConfirmButton: false,
-    timer: 4000,
+    timer: 5000,
     timerProgressBar: true
   });
 }
@@ -61,32 +60,85 @@ document.getElementById("toggleSignupPassword").addEventListener("click", functi
   }
 });
 
-/* OTP Flow
- */
+/* OTP Flow */
+
+/* Forgot Password */
+
+let generatedOTP = "";
+
 document.getElementById("forgotPasswordLink").addEventListener("click", () => {
   document.getElementById("loginForm").style.display = "none";
   document.getElementById("signupForm").style.display = "none";
   document.getElementById("otpSection").style.display = "block";
 });
 
+/* Send OTP */
 document.getElementById("sendOtpBtn").addEventListener("click", () => {
   const mobile = document.getElementById("mobile").value.trim();
+
   if (!/^[6-9]\d{9}$/.test(mobile)) {
     showToast("Invalid mobile number ❌", "danger");
     return;
   }
-  generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-  showToast(`OTP sent ✅ (demo): ${generatedOTP}`, "success");
+
+  // Generate 4-digit OTP
+  generatedOTP = Math.floor(1000 + Math.random() * 9000).toString();
+
+  showToast(`OTP Sent ✅ (demo): ${generatedOTP}`, "success");
+
+  document.getElementById("otpBox").style.display = "flex";
+  document.getElementById("verifyOtpBtn").style.display = "block";
+
+  // Clear OTP boxes
+  document.querySelectorAll(".otp-input").forEach((box) => (box.value = ""));
+
+  document.querySelector(".otp-input").focus();
 });
 
+/* Auto Jump */
+document.querySelectorAll(".otp-input").forEach((input, index, arr) => {
+  input.addEventListener("input", () => {
+    if (input.value.length === 1 && index < arr.length - 1) {
+      arr[index + 1].focus();
+    }
+  });
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Backspace" && index > 0 && input.value === "") {
+      arr[index - 1].focus();
+    }
+  });
+});
+
+/* Verify OTP */
 document.getElementById("verifyOtpBtn").addEventListener("click", () => {
-  const entered = document.getElementById("otpInput").value.trim();
-  if (entered === generatedOTP) {
-    showToast("OTP verified 🎉 Reset your password", "success");
+  let enteredOTP = "";
+  document.querySelectorAll(".otp-input").forEach((box) => {
+    enteredOTP += box.value;
+  });
+
+  if (enteredOTP === generatedOTP) {
+    showToast("OTP Verified 🎉 Reset your password", "success");
+    document.getElementById("otpSection").style.display = "none";
+    document.getElementById("resetPasswordSection").style.display = "block";
   } else {
     showToast("Invalid OTP ❌", "danger");
   }
 });
+
+/* Reset Password */
+document.getElementById("resetBtn").addEventListener("click", () => {
+  const pass = document.getElementById("newPass").value;
+  const confirm = document.getElementById("confirmPass").value;
+
+  if (pass !== confirm) {
+    showToast("Passwords do not match ❌", "danger");
+    return;
+  }
+
+  showToast("Password updated successfully 🎉", "success");
+});
+
 
 
 /*  
@@ -94,9 +146,6 @@ document.getElementById("verifyOtpBtn").addEventListener("click", () => {
 */
 
 
-// -------------------------
-// SIGNUP (No Auto Login)
-// -------------------------
 document.getElementById("signupForm").addEventListener("submit", (e) => {
   e.preventDefault();
 
@@ -105,6 +154,7 @@ document.getElementById("signupForm").addEventListener("submit", (e) => {
   const pass = document.getElementById("signupPassword").value.trim();
 
   if (!name || !email || !pass) return showToast("Please fill all fields ❌", "danger");
+  if(name.length <= 7) return showToast("Name must be at least 7 characters ❌", "danger");
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast("Enter a valid email ❌", "danger");
   if (pass.length !== 8) return showToast("Password must be exactly 8 characters ❌", "danger");
 
@@ -170,31 +220,6 @@ document.getElementById("loginForm").addEventListener("submit", (e) => {
 
   updateUIForLoginState();
 });
-
-
-
-// -------------------------
-// LOGOUT
-// -------------------------
-const logoutBtn = document.getElementById("logout-nav-btn");
-if (logoutBtn) {
-  logoutBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-
-    isLoggedIn = false;
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("currentUser");
-
-    cart = [];
-    wishlist = [];
-
-    updateCart();
-    updateWishlist();
-    updateUIForLoginState();
-
-    showToast("Logged out successfully.", "info");
-  });
-}
 
 
 // -------------------------
