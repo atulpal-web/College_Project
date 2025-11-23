@@ -75,8 +75,8 @@ document.getElementById("sendOtpBtn").addEventListener("click", () => {
     showToast("Invalid mobile number ❌", "danger");
     return;
   }
-  generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-  showToast(`OTP sent ✅ (demo): ${generatedOTP}`, "success");
+  generatedOTP = Math.floor(1000 + Math.random() * 9000).toString();
+  showToast(`OTP sent ✅ : ${generatedOTP}`, "success");
 });
 
 document.getElementById("verifyOtpBtn").addEventListener("click", () => {
