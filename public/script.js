@@ -60,36 +60,6 @@ document.getElementById("toggleSignupPassword").addEventListener("click", functi
   }
 });
 
-/* OTP Flow */
-let generatedOTP = "";
-
-document.getElementById("forgotPasswordLink").addEventListener("click", () => {
-  document.getElementById("loginForm").style.display = "none";
-  document.getElementById("signupForm").style.display = "none";
-  document.getElementById("otpSection").style.display = "block";
-});
-
-document.getElementById("sendOtpBtn").addEventListener("click", () => {
-  const mobile = document.getElementById("mobile").value.trim();
-  if (!/^[6-9]\d{9}$/.test(mobile)) {
-    showToast("Invalid mobile number ❌", "danger");
-    return;
-  }
-  generatedOTP = Math.floor(1000 + Math.random() * 9000).toString();
-  showToast(`OTP sent ✅ : ${generatedOTP}`, "success");
-});
-
-document.getElementById("verifyOtpBtn").addEventListener("click", () => {
-  const entered = document.getElementById("otpInput").value.trim();
-  if (entered === generatedOTP) {
-    showToast("OTP verified 🎉 Reset your password", "success");
-  } else {
-    showToast("Invalid OTP ❌", "danger");
-  }
-});  
-
-
-
 /*  
    Login / Signup with LocalStorage (Fixed Version)
 */
