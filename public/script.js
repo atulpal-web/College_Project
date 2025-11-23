@@ -61,9 +61,6 @@ document.getElementById("toggleSignupPassword").addEventListener("click", functi
 });
 
 /* OTP Flow */
-
-/* Forgot Password */
-
 let generatedOTP = "";
 
 document.getElementById("forgotPasswordLink").addEventListener("click", () => {
@@ -72,72 +69,24 @@ document.getElementById("forgotPasswordLink").addEventListener("click", () => {
   document.getElementById("otpSection").style.display = "block";
 });
 
-/* Send OTP */
 document.getElementById("sendOtpBtn").addEventListener("click", () => {
   const mobile = document.getElementById("mobile").value.trim();
-
   if (!/^[6-9]\d{9}$/.test(mobile)) {
     showToast("Invalid mobile number ❌", "danger");
     return;
   }
-
-  // Generate 4-digit OTP
-  generatedOTP = Math.floor(1000 + Math.random() * 9000).toString();
-
-  showToast(`OTP Sent ✅ (demo): ${generatedOTP}`, "success");
-
-  document.getElementById("otpBox").style.display = "flex";
-  document.getElementById("verifyOtpBtn").style.display = "block";
-
-  // Clear OTP boxes
-  document.querySelectorAll(".otp-input").forEach((box) => (box.value = ""));
-
-  document.querySelector(".otp-input").focus();
+  generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+  showToast(`OTP sent ✅ (demo): ${generatedOTP}`, "success");
 });
 
-/* Auto Jump */
-document.querySelectorAll(".otp-input").forEach((input, index, arr) => {
-  input.addEventListener("input", () => {
-    if (input.value.length === 1 && index < arr.length - 1) {
-      arr[index + 1].focus();
-    }
-  });
-
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Backspace" && index > 0 && input.value === "") {
-      arr[index - 1].focus();
-    }
-  });
-});
-
-/* Verify OTP */
 document.getElementById("verifyOtpBtn").addEventListener("click", () => {
-  let enteredOTP = "";
-  document.querySelectorAll(".otp-input").forEach((box) => {
-    enteredOTP += box.value;
-  });
-
-  if (enteredOTP === generatedOTP) {
-    showToast("OTP Verified 🎉 Reset your password", "success");
-    document.getElementById("otpSection").style.display = "none";
-    document.getElementById("resetPasswordSection").style.display = "block";
+  const entered = document.getElementById("otpInput").value.trim();
+  if (entered === generatedOTP) {
+    showToast("OTP verified 🎉 Reset your password", "success");
   } else {
     showToast("Invalid OTP ❌", "danger");
   }
-});
-
-/* Reset Password */
-document.getElementById("resetBtn").addEventListener("click", () => {
-  const pass = document.getElementById("newPass").value;
-  const confirm = document.getElementById("confirmPass").value;
-
-  if (pass !== confirm) {
-    showToast("Passwords do not match ❌", "danger");
-    return;
-  }
-
-  showToast("Password updated successfully 🎉", "success");
-});
+});  
 
 
 
